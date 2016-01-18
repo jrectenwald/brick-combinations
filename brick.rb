@@ -1,4 +1,3 @@
-require 'pry'
 class Wall
   attr_accessor :count
 
@@ -61,7 +60,6 @@ class Wall
   end
 
   def get_additive_rows(width)
-    binding.pry
     amounts = relative_amounts(width)
     combinations = all_possible_rows(amounts)
     make_row_elements_additive(combinations)
