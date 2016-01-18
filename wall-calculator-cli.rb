@@ -18,7 +18,8 @@ class BrickWallCLI
     height = gets.chomp.to_f
     possibilities = wall.wall_combination_count(width, height)
     puts "There are #{possibilities} ways to build a #{width}x#{height} wall."
-    continue = "Would you like to calculate the possibilities for a wall with different dimensions?(yes/no) "
+    puts "Would you like to calculate the possibilities for a wall with different dimensions?(yes/no)"
+    continue = gets.chomp
     calculate if continue.downcase == "yes" || continue.downcase == "y"
   end
 end
