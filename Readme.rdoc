@@ -1,4 +1,5 @@
- This program calculates the possible brick walls of certain dimensions that could be built with 4.5'x1' and 3'x1' bricks. 
+ This program calculates the possible brick walls of certain dimensions that could be 
+ built with 4.5'x1' and 3'x1' bricks. 
 
 
  To run the tests, run the command 'ruby brick-test.rb' in your command line.
