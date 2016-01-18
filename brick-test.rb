@@ -25,8 +25,4 @@ class TestMeme < Minitest::Test
   def test_twenty_seven_by_five_feet
     assert_equal 7958, @wall.wall_combination_count(27, 5)
   end
-
-  # def test_forty_eight_by_ten_feet
-  #   assert_equal 7958, @wall.wall_combination_count(48, 10)
-  # end
 end

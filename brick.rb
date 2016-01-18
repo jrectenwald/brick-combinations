@@ -5,64 +5,19 @@ class Wall
     @count = Count.new
   end
 
-  def relative_amounts(width)
-    amounts = []
-    iterate_three_ft_count(width, amounts)
-    return amounts
-  end
-
-  def iterate_three_ft_count(width, amounts)
-    (0..width).each do |i|
-      iterate_four_and_half_ft_count(i, width, amounts)
+  def subset_sum(numbers, target, arr=[], partial=[])
+    (0..(numbers.length - 1)).each do |i|
+      n = numbers[i]
+      last = partial[-1]
+      next_brick = last + n
+      arr.push(partial[1...-1]) if partial[-1] == target
+      return if partial[-1] == target
+      if next_brick <= target
+        new_array = partial + [last + n]
+        subset_sum(numbers, target, arr, new_array)
+      end
     end
-  end
-
-  def iterate_four_and_half_ft_count(i, width, amounts)
-    (0..width).each do |j|
-      push_to_array(i, j, width, amounts)
-    end
-  end
-
-  def push_to_array(i, j, width, amounts)
-    if combination_matches_width(i, j, width)
-      amounts.push({'4.5': j, '3': i})
-    end
-  end
- 
-  def combination_matches_width(three_ft_bricks, four_and_half_ft_bricks, wall_width)
-    three_ft_bricks == (-1.5 * four_and_half_ft_bricks + wall_width / 3.0)
-  end
-
-  def row_combination(bricks)
-    bricks.each_with_object([]) do |(length, frequency), arr|
-      frequency.times {arr.push(length.to_s.to_f)}
-    end
-  end
-
-  def one_row_permutations(bricks)
-    arr = row_combination(bricks)
-    length = arr.length
-    arr.permutation(length).to_a.uniq
-  end
-
-  def all_possible_rows(brick_amounts)
-    brick_amounts.each_with_object([]) do |bricks, arr|
-      one_row_permutations(bricks).each {|combination| arr.push(combination)}
-    end
-  end
-
-  def make_row_elements_additive(rows)
-    rows.each do |row| 
-      row.map!.with_index {|x, i| i > 0 ? row[i] + row[i-1] : row[i]}
-      row.delete_at(-1)
-    end
-    return rows
-  end
-
-  def get_additive_rows(width)
-    amounts = relative_amounts(width)
-    combinations = all_possible_rows(amounts)
-    make_row_elements_additive(combinations)
+    return arr
   end
 
   def iterate(row, all_rows, height, current_height)
@@ -79,7 +34,7 @@ class Wall
   end
 
   def wall_combination_count(width, height)
-    all_rows = get_additive_rows(width)
+    all_rows = subset_sum([3.0, 4.5], width, [], [0])
     return all_rows.count if height == 1
     all_rows.each {|row| iterate(row, all_rows, height, 2)}
     return self.count.count
