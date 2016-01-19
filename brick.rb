@@ -1,3 +1,6 @@
+gem 'pry'
+require 'pry'
+
 class Wall
   attr_accessor :count
 
@@ -27,23 +30,36 @@ class Wall
     return similarities
   end
 
-  def build_higher_levels(row, all_rows, height, current_height)
-    all_rows.each do |row_above|
-      similarities = 0
-      similarities = compare_rows(row, row_above)
-      if similarities == 0 && height == current_height
+  def build_higher_levels(row, matchups_hash, height, current_height)
+    matchups_hash[row].each do |row_above|
+      if height == current_height
         self.count.count += 1
-      elsif similarities == 0
+      else
         new_height = current_height + 1
-        build_higher_levels(row_above, all_rows, height, new_height)
+        all_rows = build_higher_levels(row_above, matchups_hash, height, new_height)
       end
     end
+  end
+
+  def matchups(all_rows)
+    matchups_hash = {}
+    all_rows.each do |row_below|
+      matches_to_bottom_row = 0
+      all_rows.each do |row_above|
+        similarities = compare_rows(row_below, row_above)
+        if similarities == 0
+          matchups_hash.has_key?(row_below) ? matchups_hash[row_below] << row_above : matchups_hash[row_below] = [row_above]
+        end
+      end
+    end
+    return matchups_hash
   end
 
   def wall_combination_count(width, height)
     all_rows = one_row_possibilities([3.0, 4.5], width, [], [0])
     return all_rows.count if height == 1
-    all_rows.each {|row| build_higher_levels(row, all_rows, height, 2)}
+    matchups_hash = matchups(all_rows)
+    all_rows.each {|row| build_higher_levels(row, matchups_hash, height, 2)}
     return self.count.count
   end
 end
