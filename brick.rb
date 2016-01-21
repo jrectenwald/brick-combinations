@@ -1,30 +1,25 @@
 class Wall
-  def compare_rows(row, row_above, similarities=0)
-    row.each do |brick| 
-      similarities += 1 if row_above.include?(brick) 
-      break if similarities == 1
-    end
-    similarities
+  def compatible?(row, row_above)
+    row.each {|brick| return false if row_above.include?(brick)}
+    true
   end
 
-  def one_row_possibilities(brick_lengths, width, walls=[], partial_wall=[])
+  def one_row_possibilities(brick_lengths, width, all_possible_rows=[], partial_wall=[])
     brick_lengths.each do |length|
-      last_brick_position = partial_wall[-1]
-      next_brick_position = last_brick_position + length
-      return walls.push(partial_wall[1...-1]) if last_brick_position == width
+      next_brick_position = partial_wall[-1] + length
+      return all_possible_rows.push(partial_wall[1...-1]) if partial_wall[-1] == width
       if next_brick_position <= width
         next_guess = partial_wall + [next_brick_position]
-        one_row_possibilities(brick_lengths, width, walls, next_guess)
+        one_row_possibilities(brick_lengths, width, all_possible_rows, next_guess)
       end
     end
-    walls
+    all_possible_rows
   end
 
   def matchups(all_rows)
     all_rows.each_with_object({}) do |row_below, matchups_hash|
       all_rows.each do |row_above|
-        similarities = compare_rows(row_below, row_above)
-        if similarities == 0
+        if compatible?(row_below, row_above)
           matchups_hash.has_key?(row_below) ? matchups_hash[row_below].push(row_above) : matchups_hash[row_below] = [row_above]
         end
       end
@@ -43,7 +38,7 @@ class Wall
     count
   end
 
-  def two_foot_wall(matchups_hash, count)
+  def two_foot_wall(matchups_hash, count=0)
     matchups_hash.each do |row_below, compatible_rows| 
       count += compatible_rows.count
     end
