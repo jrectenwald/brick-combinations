@@ -1,8 +1,9 @@
 class Wall
   def one_row_possibilities(brick_lengths, width, all_possible_rows=[], partial_wall=[])
     brick_lengths.each do |length|
-      next_brick_position = partial_wall[-1] + length
-      return all_possible_rows.push(partial_wall[1...-1]) if partial_wall[-1] == width
+      last_brick_position = partial_wall[-1]
+      next_brick_position = last_brick_position + length
+      return all_possible_rows.push(partial_wall[1...-1]) if last_brick_position == width
       if next_brick_position <= width
         next_guess = partial_wall + [next_brick_position]
         one_row_possibilities(brick_lengths, width, all_possible_rows, next_guess)
@@ -31,8 +32,7 @@ class Wall
       if (height - 1) == current_height
         count += matchups_hash[row_above].count
       else
-        new_height = current_height + 1
-        count += build_higher_levels(row_above, matchups_hash, height, new_height)
+        count += build_higher_levels(row_above, matchups_hash, height, (current_height + 1))
       end
     end
     count
