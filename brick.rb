@@ -1,9 +1,4 @@
 class Wall
-  def compatible?(row, row_above)
-    row.each {|brick| return false if row_above.include?(brick)}
-    true
-  end
-
   def one_row_possibilities(brick_lengths, width, all_possible_rows=[], partial_wall=[])
     brick_lengths.each do |length|
       next_brick_position = partial_wall[-1] + length
@@ -14,6 +9,11 @@ class Wall
       end
     end
     all_possible_rows
+  end
+
+  def compatible?(row, row_above)
+    row.each {|brick| return false if row_above.include?(brick)}
+    true
   end
 
   def matchups(all_rows)
@@ -38,10 +38,8 @@ class Wall
     count
   end
 
-  def two_foot_wall(matchups_hash, count=0)
-    matchups_hash.each do |row_below, compatible_rows| 
-      count += compatible_rows.count
-    end
+  def two_foot_wall_count(matchups_hash, count=0)
+    matchups_hash.each {|row_below, compatible_rows| count += compatible_rows.count}
     count
   end
   
@@ -49,7 +47,7 @@ class Wall
     all_rows = one_row_possibilities([3.0, 4.5], width, [], [0])
     return all_rows.count if height == 1
     matchups_hash = matchups(all_rows)
-    return two_foot_wall(matchups_hash, count) if height == 2
+    return two_foot_wall_count(matchups_hash, count) if height == 2
     all_rows.each {|row| count += build_higher_levels(row, matchups_hash, height, 2)}
     count
   end
